@@ -1,2 +1,2 @@
 <hr />
-<h2>Obligatorio</h1>
+<h2>Obligatorio</h2>
