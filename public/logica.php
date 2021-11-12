@@ -268,13 +268,25 @@ function listar_clientes() {
   }
 }
 
+function mostrar_cliente($ci) {
+  $conex = conectar_db();
+  $mostrar_cliente_ps = $conex->prepare("SELECT ci, nombre_completo FROM clientes WHERE ci=?");
+  $mostrar_cliente_ps->bind_param("s", $ci);
+  $mostrar_cliente_ps->execute();
+  $mostrar_cliente_ps->store_result();
+  $mostrar_cliente_ps->bind_result($ci, $nombre_completo);
+  while ($mostrar_cliente_ps->fetch()) {
+    echo("Cédula: " . $ci . "<br />"
+      . "Nombre: " . $nombre_completo . "<br /><br />");
+  }
+}
+
+
 // Login cliente
 function login_cliente($ci, $pass) {
-  echo("A");
   $conex = conectar_db();
-  echo("A");
   $login_cliente_ps = $conex->prepare("SELECT ci, pass FROM clientes WHERE ci=? AND pass=?");
-  $login_cliente_ps->bind_param("s", $ci, $pass);
+  $login_cliente_ps->bind_param("ss", $ci, $pass);
   $login_cliente_ps->execute();
   $login_cliente_ps->store_result();
   $login_cliente_ps->bind_result($ci_res, $pass_res);
