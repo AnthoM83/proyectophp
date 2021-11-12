@@ -1,0 +1,53 @@
+-- clientes(ci, pass, nombre_completo)
+-- compras(id, ci, tipo_pago, total, feedback)
+-- items(codigo, precio, stock)
+-- fotos_items(codigo, foto)
+-- compras_items(id_compra, codigo_item, cantidad)
+
+
+CREATE TABLE clientes(
+ci CHAR(8) PRIMARY KEY,
+pass VARCHAR(30) NOT NULL,
+nombre_completo VARCHAR(100) NOT NULL);
+
+CREATE TABLE compras(
+id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ci_cliente CHAR(8) NOT NULL,
+tipo_pago ENUM('contado', 'debito', 'credito') NOT NULL,
+total FLOAT UNSIGNED NOT NULL,
+feedback TEXT,
+FOREIGN KEY (ci_cliente)
+	REFERENCES clientes(ci)
+	ON DELETE CASCADE);
+	
+CREATE TABLE items(
+codigo CHAR(8) PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+precio FLOAT UNSIGNED NOT NULL,
+stock INT UNSIGNED NOT NULL);
+	
+CREATE TABLE fotos_items(
+codigo_item CHAR(8) NOT NULL,
+foto_id TINYINT(3) AUTO_INCREMENT PRIMARY KEY,
+foto_tipo VARCHAR(50) NOT NULL DEFAULT '',
+foto_datos BLOB NOT NULL,
+FOREIGN KEY (codigo_item)
+	REFERENCES items(codigo)
+	ON DELETE CASCADE);
+	
+CREATE TABLE compras_items(
+id_compra INT UNSIGNED NOT NULL,
+codigo_item CHAR(8) NOT NULL,
+cantidad SMALLINT UNSIGNED NOT NULL,
+PRIMARY KEY (id_compra, codigo_item),
+FOREIGN KEY (id_compra)
+	REFERENCES compras(id)
+	ON DELETE CASCADE,
+FOREIGN KEY (codigo_item)
+	REFERENCES items(codigo)
+	ON DELETE CASCADE);
+
+
+
+	
+
