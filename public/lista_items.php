@@ -1,10 +1,23 @@
+<?php session_start() ?>
 <?php
 require("logica.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$error = "";
-	if (isset($_POST['submit_baja'])) {
+	if (isset($_POST['submit_carrito'])) {
+		$okay = true;
+		$cantidad = $_POST['cantidad'];
+		if ($cantidad <= 0) {
+			$error = "La cantidad no puede ser menor a 0.";
+			$okay = false;
+		}
+		if ($okay) {
+			$_SESSION['carrito'][$_POST['codigo']] = $_POST['cantidad'];
+			header("Location: exito.php");
+		}
+
+	} else if (isset($_POST['submit_baja'])) {
 		baja_item($_POST['codigo']);
-	} else	if (isset($_POST['submit_modif']))
+	} else	if (isset($_POST['submit_modif'])) {
 		if (isset($_POST['nombre']) && isset($_POST['precio']) && isset($_POST['stock'])) {
 			$nombre = fix_input($_POST['nombre']);
 			$precio = $_POST['precio'];
@@ -24,6 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		} else {
 			$error = "Hay campos vacíos.";
 		}
+	} else if (isset($_POST['submit_foto'])) {
+		agregar_foto($_POST['codigo']);
+	}
 }
 ?>
 

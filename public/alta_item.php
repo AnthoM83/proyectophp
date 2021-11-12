@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <?php
 require("logica.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
