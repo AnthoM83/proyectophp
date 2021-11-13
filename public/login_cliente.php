@@ -1,13 +1,14 @@
 <?php session_start() ?>
 <?php
+require("logica.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  //$okay = login_cliente($_POST['ci'], $_POST['pass']);
-  // if ($okay) {
-    $_SESSION['logged'] = "12345678";
+  $okay = login_cliente($_POST['ci'], $_POST['pass']);
+   if ($okay) {
+    $_SESSION['logged'] = $_POST['ci'];
     header("Location: exito.php");
-  // } else {
-  //   $error = "Credenciales incorrectas.";
-  // }
+   } else {
+     $error = "Credenciales incorrectas.";
+   }
 }
 ?>
 

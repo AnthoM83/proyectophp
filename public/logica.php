@@ -37,13 +37,27 @@ function baja_cliente($ci)
   }
 }
 
-function modificar_cliente($ci, $pass, $nombre_completo)
+function modificar_cliente_nombre($ci, $nombre_completo)
 {
   $conex = conectar_db();
-  $modificar_cliente_ps = $conex->prepare("UPDATE clientes SET pass=?, nombre_completo=? WHERE ci=?");
-  $modificar_cliente_ps->bind_param("sss", $pass, $nombre_completo, $ci);
-  if ($modificar_cliente_ps->execute()) {
+  $modificar_cliente_nombre_ps = $conex->prepare("UPDATE clientes SET nombre_completo=? WHERE ci=?");
+  $modificar_cliente_nombre_ps->bind_param("ss", $nombre_completo, $ci);
+  if ($modificar_cliente_nombre_ps->execute()) {
     echo "Query exitosa";
+    header("Location: exito.php");
+  } else {
+    echo "Error: " . mysqli_error($conex);
+  }
+}
+
+function modificar_cliente_pass($ci, $n_pass)
+{
+  $conex = conectar_db();
+  $modificar_cliente_pass_ps = $conex->prepare("UPDATE clientes SET pass=? WHERE ci=?");
+  $modificar_cliente_pass_ps->bind_param("ss", $n_pass, $ci);
+  if ($modificar_cliente_pass_ps->execute()) {
+    echo "Query exitosa";
+    header("Location: exito.php");
   } else {
     echo "Error: " . mysqli_error($conex);
   }
@@ -276,8 +290,16 @@ function mostrar_cliente($ci) {
   $mostrar_cliente_ps->store_result();
   $mostrar_cliente_ps->bind_result($ci, $nombre_completo);
   while ($mostrar_cliente_ps->fetch()) {
-    echo("Cédula: " . $ci . "<br />"
-      . "Nombre: " . $nombre_completo . "<br /><br />");
+    echo('Cédula: ' . $ci . '<br />');
+    echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
+    echo('<input type="hidden" name="cedula" value="' . $ci . '" />');
+    echo('Nombre: <input type="text" name="nombre_completo" value="' . $nombre_completo . '" required /><br />');
+    echo('<input type="submit" name="submit_nombre" value="Modificar nombre" /></form>');
+    echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
+    echo('<input type="hidden" name="cedula" value="' . $ci . '" />');
+    echo('<br />Nueva contraseña: <input type="password" name="n_pass" required /><br />');
+    echo('Verificar contraseña: <input type="password" name="n_pass2" required /><br />');
+    echo('<input type="submit" name="submit_pass" value="Modificar contraseña" /></form>');
   }
 }
 
