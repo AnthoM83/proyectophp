@@ -21,6 +21,19 @@
 			<?php include("header.php") ?>
 		</div>
 	</nav>
+	<div style="height: 200px;
+    width: 700px;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -200px;
+    margin-left: -350px;">
+		<h1>Obligatorio de PHP realizado por:</h1></br>
+		<div style="margin-left: 50px"><h4>    - Anthony Mallada</h4></div></br>
+		<div style="margin-left: 50px"><h4>    - Joaquin Cabrera</h4></div></br>
+		<div style="margin-left: 50px"><h4>    - Juan Bourdette</h4></div></br>
+	</div>
 </body>
 
 </html>

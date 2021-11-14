@@ -51,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	?>
 	<?php mostrar_cliente($_SESSION['logged']) ?>
 
-	<?php include("footer.php") ?>
 </body>
 
 </html>
