@@ -1,7 +1,7 @@
 <?php
 
 function conectar_db() {
-  $dbhost = "localhost";
+  $dbhost = "fremsajo.com";
   $dbuser = "anthom"; // cambiar acorde
   $dbpass = "1234"; // cambiar acorde
   $dbname = "php_db"; // cambiar acorde
