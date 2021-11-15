@@ -50,6 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	?>
 	<?php mostrar_cliente($_SESSION['logged']) ?>
+	<h4>Historial de compras</h4>
+	<?php historial_compras($_SESSION['logged'])?>
 
 </body>
 

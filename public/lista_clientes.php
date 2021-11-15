@@ -1,4 +1,12 @@
 <?php session_start() ?>
+<?php 
+	require("logica.php");
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		if (isset($_POST['submit_borrar'])) {
+			baja_cliente($_POST['cedula']);
+		}
+  }
+?>
 <!DOCTYPE html>
 <html>
 
@@ -23,7 +31,6 @@
 	</nav>
 	<h3>Lista clientes</h3>
 	<?php
-	require("logica.php");
 	if (isset($error) && $error != "") {
 		echo ("<p>ERROR: " . $error . "</p>");
 	}

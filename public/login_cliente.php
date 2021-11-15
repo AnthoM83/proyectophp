@@ -51,7 +51,7 @@
     </div>
     <div class="row">
         <div class="col-md-12 form-group">
-            <input type="text" id="pass" class="fadeIn second" name="pass" placeholder="Contraseña">
+            <input type="password" id="pass" class="fadeIn second" name="pass" placeholder="Contraseña">
         </div>
     </div>
     <div class="row">

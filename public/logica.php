@@ -32,6 +32,7 @@ function baja_cliente($ci)
   $borrar_cliente_ps->bind_param("s", $ci);
   if ($borrar_cliente_ps->execute()) {
     echo "Query exitosa";
+    header("Location: exito.php");
   } else {
     echo "Error: " . mysqli_error($conex);
   }
@@ -148,16 +149,18 @@ function comprar($ci, $tipo_pago, $total, $feedback, $items)
   }
   $id_compra = $conex->insert_id; // autoincremental generado en la última query
   $comprar_items_ps = $conex->prepare("INSERT INTO compras_items(id_compra, codigo_item, cantidad) VALUES (?, ?, ?)");
+  $restar_stock_ps = $conex->prepare("UPDATE items SET stock = stock - ? WHERE codigo=?");
   foreach ($items as $codigo_item => $cantidad) {
-    $comprar_items_ps->bind_param("iii", $id_compra, $codigo_item, $cantidad);
-    if ($comprar_items_ps->execute()) {
+    $comprar_items_ps->bind_param("isi", $id_compra, $codigo_item, $cantidad);
+    $restar_stock_ps->bind_param("is", $cantidad, $codigo_item);
+    if ($comprar_items_ps->execute() && $restar_stock_ps->execute()) {
       echo "Query exitosa";
     } else {
       echo "Error: " . mysqli_error($conex);
     }
   }
   header("Location: exito.php");
-  unset($item);
+  unset($codigo_item);
   $_SESSION['carrito'] = array();
 }
 
@@ -278,7 +281,13 @@ function listar_clientes() {
   $listar_clientes_ps->bind_result($ci, $nombre_completo);
   while ($listar_clientes_ps->fetch()) {
     echo("Cédula: " . $ci . "<br />"
-      . "Nombre: " . $nombre_completo . "<br /><br />");
+    . "Nombre: " . $nombre_completo . "<br />");
+    if ($_SESSION['logged'] == "admin") {
+      echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
+      echo('<input type="hidden" name="cedula" value="' . $ci . '" />');
+      echo('<input type="submit" name="submit_borrar" value="Baja usuario" /></form>');
+    }
+    echo("<br />");
   }
 }
 
@@ -299,7 +308,31 @@ function mostrar_cliente($ci) {
     echo('<input type="hidden" name="cedula" value="' . $ci . '" />');
     echo('<br />Nueva contraseña: <input type="password" name="n_pass" required /><br />');
     echo('Verificar contraseña: <input type="password" name="n_pass2" required /><br />');
-    echo('<input type="submit" name="submit_pass" value="Modificar contraseña" /></form>');
+    echo('<input type="submit" name="submit_pass" value="Modificar contraseña" /></form><br />');
+  }
+}
+
+function historial_compras($ci) {
+  $conex = conectar_db();
+  $historial_compras_ps = $conex->prepare("SELECT id, tipo_pago, total, feedback FROM compras WHERE ci_cliente=?");
+  $historial_compras_ps->bind_param("s", $ci);
+  $historial_compras_ps->execute();
+  $historial_compras_ps->store_result();
+  $historial_compras_ps->bind_result($id, $tipo_pago, $total, $feedback);
+  $historial_items_ps = $conex->prepare("SELECT c_i.codigo_item, i.nombre, c_i.cantidad FROM compras_items AS c_i JOIN items AS i ON c_i.codigo_item=i.codigo WHERE c_i.id_compra=?");
+  while($historial_compras_ps->fetch()) {
+    echo("ID: " . $id . "<br />");
+    echo("Forma de pago: " . $tipo_pago . "<br />");
+    echo("Total: $" . $total . "<br />");
+    if ($feedback != "") echo("Feedback: " . $feedback . "<br />");
+    $historial_items_ps->bind_param("i", $id);
+    $historial_items_ps->execute();
+    $historial_items_ps->store_result();
+    $historial_items_ps->bind_result($cod, $nombre, $cant);
+    while($historial_items_ps->fetch()) {
+      echo("x" .$cant . " " . $nombre . "<br />");
+    }
+    echo("<br />");
   }
 }
 
