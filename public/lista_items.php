@@ -10,6 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			$error = "La cantidad no puede ser menor a 0.";
 			$okay = false;
 		}
+		if ($cantidad > $_POST['stock']){
+			$error = "La cantidad no puede superar el stock.";
+			$okay = false;
+		}
 		if ($okay) {
 			$_SESSION['carrito'][$_POST['codigo']] = $_POST['cantidad'];
 			header("Location: exito.php");

@@ -182,6 +182,7 @@ function listar_items()
       if (! empty($_SESSION['logged'])) {
         echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
         echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
+        echo('<input type="hidden" name="stock" value="' . $stock . '" />');
         echo(' Cantidad: <input type="number" step="1" min="0" name="cantidad" required />');
         echo('<input type="submit" name="submit_carrito" value="Añadir al carrito" /></form>');
       }

@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($_POST['feedback'] != "") {
       $feedback = $_POST['feedback'];
     }
-    comprar("12345678", $_POST['tipo_pago'], $_POST['total'], $feedback, $_SESSION['carrito']);
+    comprar($_SESSION['logged'], $_POST['tipo_pago'], $_POST['total'], $feedback, $_SESSION['carrito']);
   }
 }
 ?>
