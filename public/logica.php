@@ -173,33 +173,24 @@ function listar_items()
   $listar_items_ps->store_result();
   $listar_items_ps->bind_result($codigo, $nombre, $precio, $stock);
   $listar_fotos_items_ps = $conex->prepare("SELECT foto_tipo, foto_datos FROM fotos_items WHERE codigo_item=?");
+  $artCount = 0;
+  echo("<div class='container'>");
   while ($listar_items_ps->fetch()) {
-    if ($_SESSION['logged'] != "admin") {
-      echo("Código: " . $codigo . "<br />"
-      . "Nombre: " . $nombre . "<br />"
-      . "Precio: " . $precio . "<br />"
-      . "Stock: " . $stock . "<br />");
-      if (! empty($_SESSION['logged'])) {
-        echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
-        echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
-        echo('<input type="hidden" name="stock" value="' . $stock . '" />');
-        echo(' Cantidad: <input type="number" step="1" min="0" name="cantidad" required />');
-        echo('<input type="submit" name="submit_carrito" value="Añadir al carrito" /></form>');
+
+    $esAdmin = 0;
+    $logged = 0;
+    if(!empty($_SESSION['logged'])){
+      $logged = 1;
+      if($_SESSION['logged'] == "admin"){
+        $esAdmin = 1;
       }
     }
 
-    if ($_SESSION['logged'] == "admin") {
-      echo ("Código: " . $codigo);
-      echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
-      echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
-      echo('Nombre: <input type="text" name="nombre" value="' . $nombre . '" required /><br />');
-      echo(' Precio: <input type="number" step="0.01" min="0.01" name="precio" value="' . $precio . '" required /><br />');
-      echo(' Stock: <input type="number" step="1" min="0" name="stock" value="' . $stock . '" required /><br />');
-      echo('<input type="submit" name="submit_modif" value="Modificar ítem" /></form>');
-      echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
-      echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
-      echo('<input type="submit" name="submit_baja" value="Baja ítem" /></form>');
+    if($artCount % 3 == 0){
+      echo("<div class='row'>");
     }
+    $artCount = $artCount + 1;
+    echo("<div class='col'>");
 
     $listar_fotos_items_ps->bind_param("i", $codigo);
     $listar_fotos_items_ps->execute();
@@ -214,16 +205,49 @@ function listar_items()
       $foto_datos = base64_encode(file_get_contents(__DIR__ . '/../public/img/defaults/noimg.jpg'));
       echo '<img src="data:image/jpeg;base64,' . $foto_datos . '" width="100px" />';
     }
-    if ($_SESSION['logged'] == "admin") {
+
+    if ($esAdmin == 0) {
+      echo("Código: " . $codigo . "<br />"
+      . "Nombre: " . $nombre . "<br />"
+      . "Precio: " . $precio . "<br />"
+      . "Stock: " . $stock . "<br />");
+      if (! empty($_SESSION['logged'])) {
+        echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
+        echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
+        echo('<input type="hidden" name="stock" value="' . $stock . '" />');
+        echo(' Cantidad: <input type="number" step="1" min="0" name="cantidad" required />');
+        echo('<input type="submit" name="submit_carrito" value="Añadir al carrito" /></form>');
+      }
+    }
+
+    if ($esAdmin) {
+      echo ("Código: " . $codigo);
+      echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
+      echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
+      echo('Nombre: <input type="text" name="nombre" value="' . $nombre . '" required /><br />');
+      echo(' Precio: <input type="number" step="0.01" min="0.01" name="precio" value="' . $precio . '" required /><br />');
+      echo(' Stock: <input type="number" step="1" min="0" name="stock" value="' . $stock . '" required /><br />');
+      echo('<input type="submit" name="submit_modif" value="Modificar ítem" /></form>');
+      echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="post">');
+      echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
+      echo('<input type="submit" name="submit_baja" value="Baja ítem" /></form>');
+    }
+
+    
+    if ($esAdmin) {
       echo('<form action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" enctype="multipart/form-data" method="post">');
       echo('<input type="hidden" name="codigo" value="' . $codigo . '" />');
       echo('<input type="file" name="foto" required /><br /> ');
       echo('<input type="submit" name="submit_foto" value="Agregar foto" /></form>');
     }
-
-
-    echo("<br /><br />");
+    echo("</div>");
+    if($artCount % 3 == 0){
+      echo("</div>");
+    }
+    //$artCount = $artCount + 1;
+    //echo("<br /><br />");
   }
+  echo("</div>");
 }
 
 function listar_carrito() {
